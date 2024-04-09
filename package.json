@@ -1,4 +1,7 @@
 {
+    "engines": {
+    "node": "18.13.0"
+  },
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.15.5",
     "axios": "^1.6.7",
