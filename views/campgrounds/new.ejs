@@ -1,0 +1,49 @@
+<%layout("layouts/boilerplate")%>
+<!-- bootstrap form validation added -->
+    <div class="row m-3">
+        <h1 class="text-center">New Campground</h1>
+        <div class="col-md-6 offset-md-3">
+            <form class="needs-validation" action="/campgrounds" method="POST" enctype="multipart/form-data" novalidate>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title :</label>
+                    <input type="text" id="title" name="campground[title]" class="form-control" required>
+                    <div class="valid-feedback">
+                        looks good.. na!
+                    </div>
+                </div>
+                <div class="mb-3 ">
+                    <label for="location" class="form-label">Location :</label>
+                    <input type="text" id="location" name="campground[location]" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price :</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">$</span>
+                        <input type="text" class="form-control" required id="price" name="campground[price]"
+                            placeholder="0.0" aria-label="price-label" aria-describedby="price-label">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="discription" class="form-label">Description :</label>
+                    <textarea type="text" id="discription" name="campground[discription]"
+                        class="form-control" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <input class="form-control" type="file" name="image" id="image" multiple>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success">Add Capmpground</button>
+                    <a class="btn btn-warning" href="/campgrounds">Back</a>
+                </div>
+            </form>
+        
+        </div>
+    </div>
+
+
+    <!-- //js for form validation is in boilerplate.ejs -->
+
+
+    

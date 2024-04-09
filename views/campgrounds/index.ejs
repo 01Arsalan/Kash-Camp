@@ -1,0 +1,121 @@
+<!-- using ejs-mate -->
+
+<!-- all the content below layout function will be passed through it into boilerplate -->
+<% layout('layouts/boilerplate')%>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+
+
+    <!-- map from mapbox -->
+    <div id="cluster-map"></div>
+
+    <div class="container mt-4 pagination-container">
+        <%for(let campground of campgrounds){%>
+            <div class="card mb-3 camp-index-card" id="campgrounds/<%=campground._id%>">
+                <div class="row">
+                    <div class="col-md-4 p-0">
+                        <img src="<%=campground.images.length ? campground.images[0].url : ``%>" alt="" class="img-fluid camp-index-img">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%=campground.title%>
+                            </h5>
+                            <p class="card-text camp-index-dis">
+                                <%=campground.discription%>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <%=campground.location%>
+                                </small>
+                            </p>
+                            <a href="campgrounds/<%=campground._id%>" class="btn btn-dark camp-index-viewBtn">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <%}%>
+    </div>
+    <div class="show-more-button d-flex justify-content-center mb-5">
+        <button class="btn btn-dark mb-3 " onclick="fetchPaginatedData()">More Camps</button>
+    </div>
+
+
+
+    
+
+<script>
+    const token = '<%-process.env.MAPBOX_TOKEN%>'
+    // passing campgrounds
+    const campgrounds={features: <%-JSON.stringify(campgrounds)%>}
+</script>
+<script src="/javaScripts/clusterMap.js"></script>
+
+<script>
+    //click anywhere on a card
+    document.addEventListener("DOMContentLoaded",()=>{
+        const cards=document.querySelectorAll(".camp-index-card")
+        cards.forEach(card=>{
+            card.addEventListener("click",function(e){
+                if(window.innerWidth<=768){
+                    const url=this.id
+                    window.location.href = url;
+                }
+            },true)
+        })
+    })
+
+    // Function to fetch paginated data from the server
+    let page=0
+
+    async function fetchPaginatedData() {
+        page++
+        
+        try {
+            const response = await fetch(`/campgrounds?p=${page}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch paginated data');
+            }
+            const data = await response.json();
+            
+            //populating
+            const container=document.getElementsByClassName("pagination-container")[0]//[0],coz it retuens a HTML collection
+
+            data.forEach(campground=>{
+                const campgroundElement = document.createElement('div')
+                campgroundElement.classList.add('card', 'mb-3', 'camp-index-card')
+                campgroundElement.setAttribute('id', `campgrounds/${campground._id}`)
+
+                campgroundElement.innerHTML=`
+                    <div class="row">
+                        <div class="col-md-4 p-0">
+                            <img src="${campground.images.length ? campground.images[0].url : ``}" alt="" class="img-fluid camp-index-img">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    ${campground.title}
+                                </h5>
+                                <p class="card-text camp-index-dis">
+                                    ${campground.discription}
+                                </p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        ${campground.location}
+                                    </small>
+                                </p>
+                                <a href="campgrounds/${campground._id}" class="btn btn-dark camp-index-viewBtn">View</a>
+                            </div>
+                        </div>
+                    </div>
+                `
+                    // Update the DOM with the new data 
+                container.appendChild(campgroundElement)
+            })
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+</script>
