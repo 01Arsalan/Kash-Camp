@@ -30,7 +30,7 @@
   },
   "name": "fsd",
   "version": "1.0.0",
-  "main": "Node:Express/Test/app.js",
+  "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
