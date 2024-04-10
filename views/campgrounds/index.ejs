@@ -13,7 +13,7 @@
         <%for(let campground of campgrounds){%>
             <div class="card mb-3 camp-index-card" id="campgrounds/<%=campground._id%>">
                 <div class="row">
-                    <div class="col-md-4 px-2">
+                    <div class="col-md-4 p-0">
                         <img src="<%=campground.images.length ? campground.images[0].url : ``%>" alt="" class="img-fluid camp-index-img">
                     </div>
                     <div class="col-md-8">
@@ -52,8 +52,7 @@
 <script src="/javaScripts/clusterMap.js"></script>
 
 <script>
-    //click anywhere on a card
-    document.addEventListener("DOMContentLoaded",()=>{
+    function addListenrs(){
         const cards=document.querySelectorAll(".camp-index-card")
         cards.forEach(card=>{
             card.addEventListener("click",function(e){
@@ -62,8 +61,10 @@
                     window.location.href = url;
                 }
             },true)
-        })
-    })
+        }
+    )}
+    //click anywhere on a card
+    document.addEventListener("DOMContentLoaded",addListenrs)
 
     // Function to fetch paginated data from the server
     let page=0
@@ -112,6 +113,7 @@
                     // Update the DOM with the new data 
                 container.appendChild(campgroundElement)
             })
+            addListenrs()
 
         } catch (error) {
             console.error(error);
@@ -119,3 +121,5 @@
     }
 
 </script>
+
+
