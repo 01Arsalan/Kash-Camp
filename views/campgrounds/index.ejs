@@ -13,7 +13,7 @@
         <%for(let campground of campgrounds){%>
             <div class="card mb-3 camp-index-card" id="campgrounds/<%=campground._id%>">
                 <div class="row">
-                    <div class="col-md-4 p-0">
+                    <div class="col-md-4 px-2">
                         <img src="<%=campground.images.length ? campground.images[0].url : ``%>" alt="" class="img-fluid camp-index-img">
                     </div>
                     <div class="col-md-8">
