@@ -88,3 +88,8 @@
     z-index: 1;
     width: 100%;
 }
+
+
+.camp-index-card{
+    overflow:hidden;
+}
