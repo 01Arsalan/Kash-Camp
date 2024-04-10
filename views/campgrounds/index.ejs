@@ -69,6 +69,8 @@
     // Function to fetch paginated data from the server
     let page=1
     let mapData={features:[]}
+    //loading initial data into mapdata array to be populated on map
+    mapData.features.push(...campgrounds.features)
 
     async function fetchPaginatedData() {
         page++
