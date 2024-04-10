@@ -1,126 +1,142 @@
-<!-- using ejs-mate -->
+<%layout("layouts/boilerplate")%>
+  <link rel="stylesheet" href="/styleSheets/star.css">
+  <!-- mapbox -->
 
-<!-- all the content below layout function will be passed through it into boilerplate -->
-<% layout('layouts/boilerplate')%>
-    <script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
 
-
-    <!-- map from mapbox -->
-    <div id="cluster-map"></div>
-
-    <div class="container mt-4 pagination-container">
-        <%for(let campground of campgrounds){%>
-            <div class="card mb-3 camp-index-card" id="campgrounds/<%=campground._id%>">
-                <div class="row">
-                    <div class="col-md-4 p-0">
-                        <img src="<%=campground.images.length ? campground.images[0].url : ``%>" alt="" class="img-fluid camp-index-img">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <%=campground.title%>
-                            </h5>
-                            <p class="card-text camp-index-dis">
-                                <%=campground.discription%>
-                            </p>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <%=campground.location%>
-                                </small>
-                            </p>
-                            <a href="campgrounds/<%=campground._id%>" class="btn btn-dark camp-index-viewBtn">View</a>
-                        </div>
-                    </div>
-                </div>
+  <div class="row m-3 mb-5">
+    <div class="col-lg-6">
+      <div id="campgroundCarousel" class="carousel slide">
+        <div class="carousel-inner">
+          <%camp.images.forEach((img,i)=>{%>
+            <div class="carousel-item <%= i===0 ? 'active' : ''%> ">
+              <img src="<%=img.url%>" class="d-block w-100 rounded" style="height: 390px;" alt="...">
             </div>
-        <%}%>
+            <%})%>
+        </div>
+        <%if(camp.images.length> 1 ){%>
+          <button class="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#campgroundCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+          <%}%>
+      </div>
+      <div class="card">
+
+        <div class="card-body">
+          <h5 class="card-title">
+            <%=camp.title%>
+          </h5>
+          <p class="card-text">
+            <%=camp.discription%>
+          </p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item text-muted">
+            <%=camp.location%>
+          </li>
+          <li class="list-group-item">
+            Submitted by <b>
+              <%=camp.author.username%>
+            </b>
+          </li>
+          <li class="list-group-item">$<%=camp.price%>
+          </li>
+        </ul>
+        <%if(currentUser && camp.author.equals(currentUser._id)){%>
+          <div class="card-body">
+            <a href="/campgrounds/<%=camp._id%>/edit" class="card-link btn btn-dark">Edit</a>
+            <form class="d-inline" action="/campgrounds/<%=camp._id%>?_method=DELETE" method="post">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+          <%}%>
+            <div class="card-footer text-muted text-center">
+              2 days ago
+            </div>
+      </div>
     </div>
-    <div class="show-more-button d-flex justify-content-center mb-5">
-        <button class="btn btn-dark mb-3 " onclick="fetchPaginatedData()">More Camps</button>
+    <div class="col-lg-6">
+
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-dark map-button d-block d-lg-none mb-3 popup-map-button"
+        data-bs-toggle="modal" data-bs-target="#mapModal">
+        Map
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div id='' class="shadow-lg rounded popup-map"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id='map' class="d-none d-lg-block shadow-lg rounded"></div>
+
+      <div class="review-container ">
+        <%if(currentUser){%>
+          <h2>Leave a Review</h2>
+          <form action="/campgrounds/<%=camp._id%>/reviews" method="POST" class="mb-3 needs-validation" novalidate>
+            <div class="mb-3">
+              <fieldset class="starability-basic">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked
+                  aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1"/>
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2"/>
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3"/>
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4"/>
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5"/>
+                <label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="body">Review : </label>
+              <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+            </div>
+            <button class=" btn btn-success">Add Review</button>
+          </form>
+          <%}%>
+            <%for(let review of camp.reviews){%>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-body-secondary"><u>
+                      <%=review.author.username%>
+                    </u></h6>
+                  <p class="starability-result" data-rating="<%=review.rating%>">
+                    Rated: <%=review.rating%> stars
+                  </p>
+                  <p class="card-text">Review : <%=review.body%>
+                  </p>
+                  <%if(currentUser&&review.author.equals(currentUser._id)){%>
+                    <form action="/campgrounds/<%=camp._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                      <button type="submit" class="btn btn-danger">DELETE</button>
+                    </form>
+                    <%}%>
+                </div>
+              </div>
+              <%}%>
+      </div>
     </div>
-
-
-
-    
-
-<script>
+  </div>
+  <!-- passing the token and coordinates to external script file -->
+  <script>
     const token = '<%-process.env.MAPBOX_TOKEN%>'
-    // passing campgrounds
-    const campgrounds={features: <%-JSON.stringify(campgrounds)%>}
-</script>
-<script src="/javaScripts/clusterMap.js"></script>
-
-<script>
-    function addListenrs(){
-        const cards=document.querySelectorAll(".camp-index-card")
-        cards.forEach(card=>{
-            card.addEventListener("click",function(e){
-                if(window.innerWidth<=768){
-                    const url=this.id
-                    window.location.href = url;
-                }
-            },true)
-        }
-    )}
-    //click anywhere on a card
-    document.addEventListener("DOMContentLoaded",addListenrs)
-
-    // Function to fetch paginated data from the server
-    let page=0
-
-    async function fetchPaginatedData() {
-        page++
-        
-        try {
-            const response = await fetch(`/campgrounds?p=${page}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch paginated data');
-            }
-            const data = await response.json();
-            
-            //populating
-            const container=document.getElementsByClassName("pagination-container")[0]//[0],coz it retuens a HTML collection
-
-            data.forEach(campground=>{
-                const campgroundElement = document.createElement('div')
-                campgroundElement.classList.add('card', 'mb-3', 'camp-index-card')
-                campgroundElement.setAttribute('id', `campgrounds/${campground._id}`)
-
-                campgroundElement.innerHTML=`
-                    <div class="row">
-                        <div class="col-md-4 p-0">
-                            <img src="${campground.images.length ? campground.images[0].url : ``}" alt="" class="img-fluid camp-index-img">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    ${campground.title}
-                                </h5>
-                                <p class="card-text camp-index-dis">
-                                    ${campground.discription}
-                                </p>
-                                <p class="card-text">
-                                    <small class="text-muted">
-                                        ${campground.location}
-                                    </small>
-                                </p>
-                                <a href="campgrounds/${campground._id}" class="btn btn-dark camp-index-viewBtn">View</a>
-                            </div>
-                        </div>
-                    </div>
-                `
-                    // Update the DOM with the new data 
-                container.appendChild(campgroundElement)
-            })
-            addListenrs()
-
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-</script>
-
-
-
+    const coordinates = [`<%=camp.geometry.coordinates[0]%>`, `<%=camp.geometry.coordinates[1]%>`]
+    const title = `<%=camp.title%>`
+  </script>
+  <script src="/javaScripts/showPageMap.js"></script>
