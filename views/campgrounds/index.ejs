@@ -68,6 +68,7 @@
 
     // Function to fetch paginated data from the server
     let page=1
+    let mapData={features:[]}
 
     async function fetchPaginatedData() {
         page++
@@ -114,6 +115,16 @@
                 container.appendChild(campgroundElement)
             })
             addListenrs()
+
+
+            //putting data into mapData array to be populated into cluster map on pagination of more data
+            mapData.features.push(...data)
+
+            const geojsonSource = map.getSource('campgrounds');
+            // Update the data after the GeoJSON source was created
+            geojsonSource.setData(mapData)
+
+
 
         } catch (error) {
             console.error(error);
