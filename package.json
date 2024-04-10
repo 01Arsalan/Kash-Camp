@@ -1,4 +1,11 @@
 {
+    "name": "fsd",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+      "start": "node app.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+  },
     "engines": {
     "node": "18.13.0"
   },
@@ -28,13 +35,7 @@
     "passport-local-mongoose": "^8.0.0",
     "uuid": "^9.0.1"
   },
-  "name": "fsd",
-  "version": "1.0.0",
-  "main": "/app.js",
-  "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
